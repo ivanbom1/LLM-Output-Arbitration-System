@@ -13,3 +13,11 @@ def run_critic(eval_system_prompt: str, tested_llm_output: str, model: str = GRO
         ],
     )
     
+def run_accuracy_eval(tested_llm_output: str) -> CritiqueReportForm:
+    return run_critic("Accuracy evaluation instructions placeholder", tested_llm_output)
+
+def run_logic_eval(tested_llm_output: str) -> CritiqueReportForm:
+    return run_critic("Logic evaluation instructions placeholder", tested_llm_output)
+
+def run_completeness_eval(tested_llm_output: str) -> CritiqueReportForm:
+    return run_critic("Completemess evaluation instructions placeholder", tested_llm_output)
