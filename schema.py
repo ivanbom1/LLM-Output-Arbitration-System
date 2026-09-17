@@ -11,11 +11,16 @@ class SeverityLevel(int, Enum): # Classification of an Issue. Each one has a dif
     LOW = 1
     MEDIUM = 2
     HIGH = 3
-    
+
 class Issue(BaseModel): #Issue Object, has a problematic part reference, explanation and class of the issue
-    quote: str = Field(..., description="Problem part from the original output") 
-    problem: str = Field(..., description="What's the issue")
+    quote: str = Field(..., description="Exact snippet from the original output")
+    problem: str = Field(..., description="What's wrong with it")
     severity: SeverityLevel
+    missing_aspect: str | None = Field(
+        None,
+        description="For completeness gaps only: the part of the question that went unanswered. "
+                    "Leave null for accuracy/logic issues, which quote the output directly instead.",
+    )
 
 class CritiqueReportForm(BaseModel): 
     dimension: Dimension
