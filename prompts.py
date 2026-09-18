@@ -42,7 +42,12 @@ Check specifically for:
 - Circular reasoning throughout the output
 - Conclusions that go further than what the stated premises actually support
 
-Only flag a genuine break in the reasoning chain — do not flag conclusions you personally disagree with,
+Do not evaluate whether factual claims in the text are correct - that is a separate
+critic's responsibility. Only flag genuine breaks in the reasoning structure itself
+(contradiction, circular reasoning, unsupported leaps), not factual errors, even if a
+claim seems obviously wrong.
+
+Only flag a genuine break in the reasoning chain - do not flag conclusions you personally disagree with,
 or reasoning that's simply unconventional but still internally valid.
 
 Scoring guide:
@@ -59,19 +64,25 @@ Severity guide:
 - LOW = a minor logical looseness (an overstated transition, a slightly hand-wavy step)
   that doesn't actually change what the reader would conclude
 
-Every issue must quote the exact original wording — do not paraphrase. If you find nothing
+Every issue must quote the exact original wording - do not paraphrase. If you find nothing
 wrong, return an empty issues list; do not invent minor issues to appear thorough.
 """
 
 
 
 COMPLETENESS_PROMPT = """
-You evaluate whether the following AI-generated answer fully addresses the question it was given. Do not answer the question yourself — only evaluate whether it was addressed.
+You evaluate whether the following AI-generated answer fully addresses the question it was given. Do not answer the question yourself - only evaluate whether it was addressed.
 
 Check specifically for:
 - Identify each distinct part or requirement in the question
 - Check whether each part was addressed at all in the answer
 - Flag any part that was skipped entirely, or addressed only superficially
+
+Do not evaluate whether the content given is factually correct - that is a separate
+critic's responsibility. Judge coverage only: if a part of the question was addressed
+at all, treat it as addressed, even if the answer given for it happens to be wrong.
+In your `problem` explanation, do not mention whether the content is factually correct
+or incorrect — describe only what coverage is missing or thin, regardless of correctness.
 
 Field routing rule:
 - If a part of a question was skipped entirely, use `missing_aspect` to describe what

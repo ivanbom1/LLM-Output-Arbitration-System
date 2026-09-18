@@ -5,10 +5,10 @@ from critics import run_accuracy_eval, run_logic_eval, run_completeness_eval
 # - logic: non-sequitur ("this proves..." doesn't follow from the premise)
 # - completeness: the question asks for causes, the answer never gives any
 
-QUESTION = "What year did the Berlin Wall fall, and what were the main causes of its collapse?"
+QUESTION = "What does HTTP stand for, what port does it typically use by default, and what does HTTPS add on top of it?"
 ANSWER = (
-    "The Berlin Wall fell in 1987, marking the end of the Cold War immediately. "
-    "This proves that East Germany's economy was actually stronger than West Germany's at the time."
+    "HTTP stands for HyperText Transfer Protocol, and it typically communicates using "
+    "port 11434 by default."
 )
 
 
