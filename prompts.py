@@ -63,6 +63,34 @@ Every issue must quote the exact original wording — do not paraphrase. If you 
 wrong, return an empty issues list; do not invent minor issues to appear thorough.
 """
 
+
+
 COMPLETENESS_PROMPT = """
-[same five-part structure, plus the missing_aspect vs quote routing rule]
+You evaluate whether the following AI-generated answer fully addresses the question it was given. Do not answer the question yourself — only evaluate whether it was addressed.
+
+Check specifically for:
+- Identify each distinct part or requirement in the question
+- Check whether each part was addressed at all in the answer
+- Flag any part that was skipped entirely, or addressed only superficially
+
+Field routing rule:
+- If a part of a question was skipped entirely, use `missing_aspect` to describe what
+was left unanswered, and leave `quote` empty.
+- If a part was addressed but weakly or incompletely, use `quote` to reference the relevant
+portion of the answer and describe the gap in `problem`, leaving `missing_aspect` empty.
+
+Scoring guide:
+- 5 = no issues found
+- 4 = only LOW severity issues
+- 3 = at least one MEDIUM severity issue, no HIGH
+- 2 = one HIGH severity issue
+- 1 = multiple HIGH severity issues
+
+Severity guide:
+- HIGH = a major, explicitly requested part of the question was skipped entirely
+- MEDIUM = a part was addressed but with a significant, noticeable gap
+- LOW = a minor sub-point received only cursory treatment
+
+For quoted issues, use the exact original wording - do not paraphrase. If nothing
+was missed, return an empty issues list; do not invent minor gaps to appear thorough.
 """
