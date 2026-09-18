@@ -16,7 +16,7 @@ class Issue(BaseModel): #Issue Object, has a problematic part reference, explana
     quote: str = Field(..., description="Exact snippet from the original output")
     problem: str = Field(..., description="What's wrong with it")
     severity: SeverityLevel
-    missing_aspect: str | None = Field(
+    missing_aspect: str | None = Field( # missing aspect needed only for completeness check. instructions of proper usage are going to be designed later
         None,
         description="For completeness gaps only: the part of the question that went unanswered. "
                     "Leave null for accuracy/logic issues, which quote the output directly instead.",
