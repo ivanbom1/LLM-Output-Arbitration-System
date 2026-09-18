@@ -1,11 +1,28 @@
 from llm_connect import groq_client
-from schema import CritiqueReportForm
+from schema import CritiqueReportForm, SeverityLevel
 from config import GROQ_MODEL_ACCURACY, GROQ_MODEL_LOGIC, GROQ_MODEL_COMPLETENESS
 from prompts import *
 
+def compute_score(issues: list) -> int:
+    """Deterministically derive the score from issue severities, per the scoring
+    guide in each prompt — instead of trusting the model to do this arithmetic
+    itself, which is unreliable. This always overrides whatever score the model
+    returned, so the two can never disagree."""
+    if not issues:
+        return 5
+    highs = sum(1 for i in issues if i.severity == SeverityLevel.HIGH)
+    meds = sum(1 for i in issues if i.severity == SeverityLevel.MEDIUM)
+    if highs >= 2:
+        return 1
+    if highs == 1:
+        return 2
+    if meds >= 1:
+        return 3
+    return 4  # only LOW-severity issues present
+
 def run_critic(eval_system_prompt: str, tested_llm_output: str, model: str) -> CritiqueReportForm:
     
-    return groq_client.chat.completions.create(
+    report = groq_client.chat.completions.create(
         model=model,
         response_model=CritiqueReportForm,
         messages=[
@@ -13,6 +30,8 @@ def run_critic(eval_system_prompt: str, tested_llm_output: str, model: str) -> C
             {"role": "user", "content": tested_llm_output}, # tested_llm_output - API's user role: the content being judged, not responded to
         ],
     )
+    report.score = compute_score(report.issues) #re-compute the severity level depended on number of issues
+    return report
     
 def run_accuracy_eval(tested_llm_output: str) -> CritiqueReportForm:
     
