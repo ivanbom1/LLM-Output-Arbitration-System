@@ -13,7 +13,7 @@ class SeverityLevel(int, Enum): # Classification of an Issue. Each one has a dif
     HIGH = 3
 
 class Issue(BaseModel): #Issue Object, has a problematic part reference, explanation and class of the issue
-    quote: str = Field(..., description="Exact snippet from the original output")
+    quote: str | None = Field(..., description="Exact snippet from the original output")
     problem: str = Field(..., description="What's wrong with it")
     severity: SeverityLevel
     missing_aspect: str | None = Field( # missing aspect needed only for completeness check. instructions of proper usage are going to be designed later

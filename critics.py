@@ -1,6 +1,7 @@
 from llm_connect import groq_client
 from schema import CritiqueReportForm
 from config import GROQ_MODEL_ACCURACY, GROQ_MODEL_LOGIC, GROQ_MODEL_COMPLETENESS
+from prompts import *
 
 def run_critic(eval_system_prompt: str, tested_llm_output: str, model: str) -> CritiqueReportForm:
     
@@ -16,7 +17,7 @@ def run_critic(eval_system_prompt: str, tested_llm_output: str, model: str) -> C
 def run_accuracy_eval(tested_llm_output: str) -> CritiqueReportForm:
     
     return run_critic(
-        "Accuracy evaluation instructions placeholder", 
+        ACCURACY_PROMPT, 
         tested_llm_output, 
         model=GROQ_MODEL_ACCURACY,
     )
@@ -24,7 +25,7 @@ def run_accuracy_eval(tested_llm_output: str) -> CritiqueReportForm:
 def run_logic_eval(tested_llm_output: str) -> CritiqueReportForm:
     
     return run_critic(
-        "Logic evaluation instructions placeholder", 
+        LOGIC_PROMPT, 
         tested_llm_output, 
         model=GROQ_MODEL_LOGIC,
     )
@@ -32,7 +33,7 @@ def run_logic_eval(tested_llm_output: str) -> CritiqueReportForm:
 def run_completeness_eval(tested_llm_output: str, original_question: str) -> CritiqueReportForm:
     
     return run_critic(
-        "Completeness evaluation instructions placeholder",
+        COMPLETENESS_PROMPT,
         f"Question: {original_question}\n\nAnswer: {tested_llm_output}",
         model=GROQ_MODEL_COMPLETENESS,
     )
