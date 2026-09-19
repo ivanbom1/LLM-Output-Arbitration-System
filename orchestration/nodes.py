@@ -1,6 +1,21 @@
 from .state import ArbitrationState
 from critics import run_accuracy_eval, run_logic_eval, run_completeness_eval
 from eval_options import ACTIVE_SCALE
+import time
+
+
+def call_with_retry(fnc, *args, max_attempts: int = 3, delay_sec: float = 2.0, **kwargs):
+    
+    last_err = None
+    for a in range(1, max_attempts + 1):
+        try:
+            return fnc(*args, **kwargs)
+        except Exception as e:
+            last_err = e
+            if a < max_attempts:
+                time.sleep(delay_sec)
+        
+    raise last_err
 
 def parse_input_node(state: ArbitrationState) -> dict:
     """
@@ -13,7 +28,7 @@ def parse_input_node(state: ArbitrationState) -> dict:
 def accuracy_node(state: ArbitrationState) -> dict:
     try:
         
-        report = run_accuracy_eval(state["output_text"])
+        report = call_with_retry(run_accuracy_eval, state["output_text"])
         return {"accuracy_report": report}
     
     except Exception as e:
@@ -25,7 +40,7 @@ def accuracy_node(state: ArbitrationState) -> dict:
 def logic_node(state: ArbitrationState) -> dict:
     try:
             
-            report = run_logic_eval(state["output_text"])
+            report = call_with_retry(run_logic_eval, state["output_text"])
             return {"logic_report": report}
         
     except Exception as e:
@@ -36,7 +51,7 @@ def logic_node(state: ArbitrationState) -> dict:
         
 def completeness_node(state: ArbitrationState) -> dict:
     try:
-        report = run_completeness_eval(state["output_text"], state["question"])
+        report = call_with_retry(run_completeness_eval, state["output_text"], state["question"])
         return {"completeness_report": report}
     
     except Exception as e:
