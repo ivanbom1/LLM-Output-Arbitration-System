@@ -52,8 +52,36 @@ def collect_critiques_node(state: ArbitrationState) -> dict:
     return {}
 
 def detect_disagreements_node(state: ArbitrationState) -> dict:
-    # disagreements detection algorithms based on the score 
-    raise NotImplementedError
+    # disagreements detection algorithms based on the score difference
+    reports = {
+        "acurracy": state["accuracy_report"],
+        "logic": state["logic_report"],
+        "completeness": state["completeness_report"]
+    }
+
+    reports = {k: v for k, v in reports.items() if v is not None}
+    
+    disagreements:list = []
+    gap_threshold = ACTIVE_SCALE["disagreement_gap"]
+    
+    names = list(reports.keys())
+    for i in range(len(names)):
+        for j in range(i + 1, len(names)):
+            a, b = reports[names[i]], reports[names[j]]
+            if abs(a.score - b.score) > gap_threshold:
+                disagreements.append({
+                    "type": "score_gap",
+                    "critics": [names[i], names[j]],
+                    "detail": f"{names[i]}={a.score} vs {names[j]}={b.score}",
+                })
+                
+    issue_counts = {name: len(r.issues) for name, r in reports.items()}
+    if any(issue_counts.values()) and not all(issue_counts.values()):
+        disagreements.append({
+            "type": "coverage_gap",
+            "detail": issue_counts
+        })
+    return {"disagreements": disagreements}
 
 def adjudicate_node(state: ArbitrationState) -> dict:
     
