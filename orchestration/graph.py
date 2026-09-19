@@ -1,5 +1,5 @@
 from langgraph.graph import StateGraph, START, END
-from state import ArbitrationState
+from .state import ArbitrationState
 
 
 def build_graph():
