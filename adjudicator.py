@@ -18,3 +18,12 @@ def format_report(name: str, report) -> str:
             lines.append(f" missing_aspect: {issue.missing_aspect!r}")
         lines.append(f" problem: {issue.problem}")
     return "\n".join(lines)
+
+def format_disagreement(disagreements: list) -> str:
+    if not disagreements:
+        return "DISAGREEMENTS: \n none detected"
+    lines = ["DISAGREEMENTS:"]
+    for d in disagreements:
+        lines.append(f"  - {d}")
+    return "\n".join(lines)
+
