@@ -27,3 +27,21 @@ def format_disagreement(disagreements: list) -> str:
         lines.append(f"  - {d}")
     return "\n".join(lines)
 
+def build_adjudication_input(
+    question: str,
+    output_text: str,
+    accuracy_report,
+    logic_report,
+    completeness_report,
+    disagreements: list,
+) -> str:
+    
+    sections= [
+        f"QUESTION:\n{question}",
+        f"OUTPUT:\n{output_text}",
+        format_report("accuracy", accuracy_report),
+        format_report("logic", logic_report),
+        format_report("completeness", completeness_report),
+        format_disagreement,
+    ]
+    return "\n\n".join(sections)
