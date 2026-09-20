@@ -42,6 +42,26 @@ def build_adjudication_input(
         format_report("accuracy", accuracy_report),
         format_report("logic", logic_report),
         format_report("completeness", completeness_report),
-        format_disagreement,
+        format_disagreement(disagreements),
     ]
     return "\n\n".join(sections)
+
+def run_adjudication(
+    question: str,
+    output_text: str,
+    accuracy_report,
+    logic_report,
+    completeness_report,
+    disagreements: list,
+) -> AdjudicationResult:
+    
+    user_content = build_adjudication_input(question, output_text, accuracy_report, logic_report, completeness_report, disagreements)
+    return groq_client.chat.completions.create(
+        model=GROQ_MODEL_ADJUDICATOR,
+        response_model=AdjudicationResult,
+        messages=[
+            {"role": "system", "content":ADJUDICATION_PROMPT},
+            {"role": "user", "content": user_content}
+        ],
+    )
+    
