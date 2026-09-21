@@ -4,7 +4,8 @@ from eval_options import ACTIVE_SCALE
 import time
 
 from adjudicator import run_adjudication
-
+from schema import Dimension
+from verdict_schema import ConfirmedIssue, Verdict
 
 def call_with_retry(fnc, *args, max_attempts: int = 3, delay_sec: float = 2.0, **kwargs):
     
@@ -119,6 +120,40 @@ def adjudicate_node(state: ArbitrationState) -> dict:
             "adjudication": None,
             "disagreements": [{"type": "adjudicator_failure", "error": str(e)}],
         }
+        
+def compute_overall_score(confirmed_issues: list) -> int:
+    if not confirmed_issues:
+        return 10
+
+    highs = sum(1 for i in confirmed_issues if i.severity.name == "HIGH")
+    meds = sum(1 for i in confirmed_issues if i.severity.name == "MEDIUM")
+    if highs >= 2:
+        return 2
+    if  highs == 1:
+        return 4
+    if meds >= 1:
+        return 6
+    
+    return 8 # if only low issues confirmed
+
+def compute_confidence(reports: list) -> float:
+    available = [r.confidence for r in reports if r is not None]
+    return sum(available / len(available) if available else 0.5)
+
+def build_summary(confirmed_issues: list, dismissed_flags: list) -> str:
+    if not confirmed_issues:
+        return ("All three critics evaluated this output and, after review no confirmed"
+                "issues were found accross accuracy, logic, or completeness.")
+    
+    highs = sum(1 for i in confirmed_issues if i.severity.name == "HIGH")
+    parts = [f"{len(confirmed_issues)} issue(s) were confirmed after adjudication"]
+    if highs:
+        parts.append(f"including {highs} high-severity issue(s)")
+    if dismissed_flags:
+        parts.append(f"{len(dismissed_flags)} additional critic flag(s) were reviewed and dismissed")
+        
+    return ", ".join(parts) + "."
+
     
 def synthesize_verdict_node(state: ArbitrationState) -> dict:
     
