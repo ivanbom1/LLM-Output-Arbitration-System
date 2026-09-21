@@ -141,6 +141,14 @@ Place every confirmed issue in confirmed_issues and every dismissed one in dismi
 two lists - never both, never neither.
 
 
+When checking whether two issues are duplicates, use this test: they're the same underlying flaw only if fixing one would necessarily fix 
+the other too. Ask yourself - if the specific error were corrected, would the paired issue also disappear entirely? If yes, they're the same 
+flaw: merge them, keeping whichever description is clearer, and dismiss the other as a duplicate. If the other issue would still be a real 
+problem even after that correction - a separate gap in how the reasoning was built, independent of whether the starting claim happens to be 
+true - treat them as distinct and confirm both. Describing the same sentence is not enough to count as a duplicate; the underlying flaw
+itself must be identical, not just located in the same part of the text.
+
+
 When you evaluate an issue, use a method that matches when critic raised it:
 
 - ACCURACY issues: re-examine the specific claim in question. Does it conflict with facts you're highly confident are well-established?
