@@ -72,7 +72,7 @@ def collect_critiques_node(state: ArbitrationState) -> dict:
 def detect_disagreements_node(state: ArbitrationState) -> dict:
     # disagreements detection algorithms based on the score difference
     reports = {
-        "acurracy": state["accuracy_report"],
+        "accuracy": state["accuracy_report"],
         "logic": state["logic_report"],
         "completeness": state["completeness_report"]
     }
@@ -138,7 +138,7 @@ def compute_overall_score(confirmed_issues: list) -> int:
 
 def compute_confidence(reports: list) -> float:
     available = [r.confidence for r in reports if r is not None]
-    return sum(available / len(available) if available else 0.5)
+    return sum(available) / len(available) if available else 0.5
 
 def build_summary(confirmed_issues: list, dismissed_flags: list) -> str:
     if not confirmed_issues:
@@ -161,7 +161,7 @@ def synthesize_verdict_node(state: ArbitrationState) -> dict:
     reports = {
         "accuracy": state["accuracy_report"],
         "logic" : state["logic_report"],
-        "completeness": state["completeness"],
+        "completeness": state["completeness_report"],
     }
     
     adjudicator_fail = any(d.get("type") == "adjudicator_failure" for d in disagreements)

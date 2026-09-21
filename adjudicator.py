@@ -10,7 +10,7 @@ def format_report(name: str, report) -> str:
     lines = [f"{name.upper()} REPORT (score={report.score}, confidence={report.confidence}):"]
     if not report.issues:
         lines.append(" no issue found")
-    for i, issue in enumerate(report.issue, 1):
+    for i, issue in enumerate(report.issues, 1):
         lines.append(f"  issue {i} (severity={issue.severity.name})")
         if issue.quote:
             lines.append(f" quote: {issue.quote!r}")
