@@ -3,6 +3,8 @@ from critics import run_accuracy_eval, run_logic_eval, run_completeness_eval
 from eval_options import ACTIVE_SCALE
 import time
 
+from adjudicator import run_adjudication
+
 
 def call_with_retry(fnc, *args, max_attempts: int = 3, delay_sec: float = 2.0, **kwargs):
     
@@ -100,8 +102,24 @@ def detect_disagreements_node(state: ArbitrationState) -> dict:
 
 def adjudicate_node(state: ArbitrationState) -> dict:
     
-    raise NotImplementedError
+    try:
+        result = call_with_retry(
+            run_adjudication,
+            state["question"],
+            state["output_text"],
+            state["accuracy_report"],
+            state["logic_report"],
+            state["completeness_report"],
+            state["disagreements"]
+        )
+        return {"adjudication": result}
 
+    except Exception as e:
+        return {
+            "adjudication": None,
+            "disagreements": [{"type": "adjudicator_failure", "error": str(e)}],
+        }
+    
 def synthesize_verdict_node(state: ArbitrationState) -> dict:
     
     raise NotImplementedError
