@@ -26,7 +26,7 @@ def build_graph():
     graph = StateGraph(ArbitrationState)
     # add graph nodes
     graph.add_node("parse_input", parse_input_node)
-    graph.add_node("accurate_critic", accuracy_node)
+    graph.add_node("accuracy_critic", accuracy_node)
     graph.add_node("logic_critic", logic_node)
     graph.add_node("completeness_critic", completeness_node)
     graph.add_node("collect_critiques", collect_critiques_node)
@@ -38,7 +38,7 @@ def build_graph():
     graph.add_edge(START, "parse_input")
     
     # set concurrent start of three critics
-    graph.add_edge("parse_input", "accurate_critic")
+    graph.add_edge("parse_input", "accuracy_critic")
     graph.add_edge("parse_input", "logic_critic")
     graph.add_edge("parse_input", "completeness_critic")
     
