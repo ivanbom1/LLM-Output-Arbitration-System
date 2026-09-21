@@ -153,8 +153,51 @@ def build_summary(confirmed_issues: list, dismissed_flags: list) -> str:
         parts.append(f"{len(dismissed_flags)} additional critic flag(s) were reviewed and dismissed")
         
     return ", ".join(parts) + "."
-
     
 def synthesize_verdict_node(state: ArbitrationState) -> dict:
     
-    raise NotImplementedError
+    adjudication = state.get("adjudication")
+    disagreements = state.get("disagreements") or []
+    reports = {
+        "accuracy": state["accuracy_report"],
+        "logic" : state["logic_report"],
+        "completeness": state["completeness"],
+    }
+    
+    adjudicator_fail = any(d.get("type") == "adjudicator_failure" for d in disagreements)
+    
+    if adjudication is not None:
+        
+        confirmed = adjudication.confirmed_issues
+        dismissed = adjudication.dismissed_flags
+        
+    elif adjudicator_fail:
+        
+        confirmed = [
+            ConfirmedIssue(
+                source_critic=Dimension(name),
+                problem=issue.problem,
+                severity=issue.severity,
+                evidence="Adjudicator unavailable — auto-confirmed from critic report without review.",
+            )
+            for name, report in reports.items() if report is not None
+            for issue in report.issues
+        ]
+        dismissed = []
+    else:
+        # True short-circuit: every critic came back clean, adjudicate never ran.
+        confirmed = []
+        dismissed = []
+ 
+    confidence = compute_confidence(list(reports.values()))
+    if adjudicator_fail:
+        confidence *= 0.5  # penalize - nothing here was genuinely reviewed
+ 
+    verdict = Verdict(
+        overall_score=compute_overall_score(confirmed),
+        confidence=confidence,
+        confirmed_issues=confirmed,
+        dismissed_flags=dismissed,
+        summary=build_summary(confirmed, dismissed),
+    )
+    return {"verdict": verdict} 
