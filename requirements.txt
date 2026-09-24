@@ -1,0 +1,8 @@
+pydantic
+instructor
+openai
+anthropic
+python-dotenv
+langgraph
+fastapi
+uvicorn
